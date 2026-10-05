@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CI/CD Pipeline Architecture</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f8fafc;margin:0;padding:40px;color:#0f172a}
+h1{text-align:center;margin-bottom:36px}
+.flow{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px;max-width:1450px;margin:auto}
+.box{background:#fff;border:2px solid #cbd5e1;border-radius:14px;padding:18px 20px;min-width:125px;text-align:center;box-shadow:0 8px 20px rgba(15,23,42,.08);font-weight:700}
+.arrow{font-size:28px;color:#64748b}
+.deploy{border-color:#60a5fa}.verify{border-color:#34d399}.issue{border-color:#f59e0b}.rollback{border-color:#f87171}
+.caption{max-width:1000px;margin:34px auto 0;text-align:center;color:#475569;line-height:1.6}
+</style>
+</head>
+<body>
+<h1>GitHub → Jenkins → Build → Test → Docker → Deploy → Verify → Rollback</h1>
+<div class="flow">
+<div class="box">GitHub<br>Repository</div><div class="arrow">→</div>
+<div class="box">Jenkins<br>Pipeline</div><div class="arrow">→</div>
+<div class="box">Build</div><div class="arrow">→</div>
+<div class="box">Test</div><div class="arrow">→</div>
+<div class="box">Docker<br>Build</div><div class="arrow">→</div>
+<div class="box">Docker Hub<br>Registry</div><div class="arrow">→</div>
+<div class="box deploy">Docker Swarm<br>3 Replicas</div><div class="arrow">→</div>
+<div class="box deploy">Rolling Update<br>1 at a Time</div><div class="arrow">→</div>
+<div class="box verify">Verify<br>/health</div><div class="arrow">→</div>
+<div class="box issue">Controlled<br>Bad Release</div><div class="arrow">→</div>
+<div class="box rollback">Rollback</div><div class="arrow">→</div>
+<div class="box verify">Healthy Version<br>Restored</div>
+</div>
+<p class="caption">
+The service updates one replica at a time. A deliberately failing release pauses the update,
+after which Docker Swarm restores the previous working service configuration and Jenkins verifies it.
+</p>
+</body>
+</html>
