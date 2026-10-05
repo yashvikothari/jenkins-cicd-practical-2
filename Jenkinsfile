@@ -149,7 +149,7 @@ pipeline {
                         fi
 
                         docker logout
-                        ./scripts/wait-for-service.sh "$SERVICE_NAME" 180 "$REPLICAS"
+                        bash ./scripts/wait-for-service.sh "$SERVICE_NAME" 180 "$REPLICAS"
                         docker service ps "$SERVICE_NAME" --no-trunc
                     '''
                 }
@@ -159,7 +159,7 @@ pipeline {
         stage('Verify New Version') {
             steps {
                 sh '''
-                    ./scripts/verify-app.sh "http://127.0.0.1:${PUBLISHED_PORT}/health" 90
+                    bash ./scripts/verify-app.sh "http://127.0.0.1:${PUBLISHED_PORT}/health" 90
                     docker service inspect "$SERVICE_NAME" \
                       --format 'Current image: {{.Spec.TaskTemplate.ContainerSpec.Image}}'
                     docker service ls --filter "name=$SERVICE_NAME"
@@ -197,7 +197,7 @@ pipeline {
 
                         docker logout
 
-                        ./scripts/wait-for-paused-update.sh "$SERVICE_NAME" 60
+                        bash ./scripts/wait-for-paused-update.sh "$SERVICE_NAME" 60
 
                         echo "CONTROLLED FAILURE CAPTURED"
                         docker service inspect "$SERVICE_NAME" \
@@ -217,7 +217,7 @@ pipeline {
                     echo "Rolling back to previous working service configuration..."
                     docker service update --rollback --detach=true "$SERVICE_NAME"
 
-                    ./scripts/wait-for-service.sh "$SERVICE_NAME" 180 "$REPLICAS"
+                    bash ./scripts/wait-for-service.sh "$SERVICE_NAME" 180 "$REPLICAS"
                     ./scripts/verify-app.sh "http://127.0.0.1:${PUBLISHED_PORT}/health" 90
 
                     echo "ROLLBACK SUCCESSFUL"
